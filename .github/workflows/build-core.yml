@@ -1,0 +1,35 @@
+name: Build Core Package
+
+on:
+  push:
+    paths:
+      - 'packages/core/**'
+      - '.github/workflows/build-core.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      - name: Install dependencies
+        working-directory: packages/core
+        run: npm install
+        
+      - name: Build package
+        working-directory: packages/core
+        run: npm run build
+        
+      - name: Commit and push dist
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add packages/core/dist -f
+          git commit -m "chore: update dist files [skip ci]" || echo "No changes to commit"
+          git push
