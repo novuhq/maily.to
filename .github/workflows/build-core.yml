@@ -20,11 +20,11 @@ jobs:
           
       - name: Install dependencies
         working-directory: packages/core
-        run: npm install
+        run: pnpm install
         
       - name: Build package
         working-directory: packages/core
-        run: npm run build
+        run: pnpm build
         
       - name: Commit and push dist
         run: |
