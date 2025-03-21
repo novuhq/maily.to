@@ -18,13 +18,16 @@ jobs:
         with:
           node-version: '18'
           
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+          
       - name: Install dependencies
-        working-directory: packages/core
         run: pnpm install
         
-      - name: Build package
-        working-directory: packages/core
-        run: pnpm build
+      - name: Build core package
+        run: pnpm --filter @maily-to/core build
         
       - name: Commit and push dist
         run: |
