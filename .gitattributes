@@ -1,2 +1,7 @@
 packages/core/dist/** binary
 packages/render/dist/** binary
+packages/core/dist/**/*.js binary
+packages/core/dist/**/*.cjs binary
+packages/core/dist/**/*.mjs binary
+packages/core/dist/**/*.d.ts binary
+packages/core/dist/**/*.css binary
