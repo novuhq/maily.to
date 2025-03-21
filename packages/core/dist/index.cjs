@@ -7787,13 +7787,16 @@ function SlashCommandItem(props) {
     selectedCommandIndex,
     editor,
     activeCommandRef,
-    selectItem
+    selectItem,
+    hoveredItemKey,
+    onHover
   } = props;
   const [open, setOpen] = (0, import_react55.useState)(false);
-  const [isHovered, setIsHovered] = (0, import_react55.useState)(false);
   const isActive = groupIndex === selectedGroupIndex && commandIndex === selectedCommandIndex;
+  const itemKey = `${groupIndex}-${commandIndex}`;
+  const isHovered = hoveredItemKey === itemKey;
   const isSubCommand = item && "commands" in item;
-  const shouldOpenTooltip = !!(item == null ? void 0 : item.preview) && (isActive || isHovered);
+  const shouldOpenTooltip = !!(item == null ? void 0 : item.preview) && (isHovered || isActive && !hoveredItemKey);
   const hasRenderFunction = typeof item.render === "function";
   const renderFunctionValue = hasRenderFunction ? (_a = item.render) == null ? void 0 : _a.call(item, editor) : null;
   let value = /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)(import_jsx_runtime53.Fragment, { children: [
@@ -7842,8 +7845,8 @@ function SlashCommandItem(props) {
           isActive ? "mly-bg-gray-100 mly-text-gray-900" : "mly-bg-transparent"
         ),
         onClick: () => selectItem(groupIndex, commandIndex),
-        onMouseEnter: () => setIsHovered(true),
-        onMouseLeave: () => setIsHovered(false),
+        onMouseEnter: () => onHover(true),
+        onMouseLeave: () => onHover(false),
         type: "button",
         ref: isActive ? activeCommandRef : null,
         children: value
@@ -7877,6 +7880,7 @@ var CommandList = (0, import_react57.forwardRef)(function CommandList2(props, re
   const { items: groups, command, editor, range, query } = props;
   const [selectedGroupIndex, setSelectedGroupIndex] = (0, import_react57.useState)(0);
   const [selectedCommandIndex, setSelectedCommandIndex] = (0, import_react57.useState)(0);
+  const [hoveredItemKey, setHoveredItemKey] = (0, import_react57.useState)(null);
   const prevQuery = (0, import_react57.useRef)("");
   const prevSelectedGroupIndex = (0, import_react57.useRef)(0);
   const prevSelectedCommandIndex = (0, import_react57.useRef)(0);
@@ -8025,6 +8029,7 @@ var CommandList = (0, import_react57.forwardRef)(function CommandList2(props, re
             }
           ),
           /* @__PURE__ */ (0, import_jsx_runtime54.jsx)("div", { className: "mly-space-y-0.5 mly-p-1", children: group.commands.map((item, commandIndex) => {
+            const itemKey = `${groupIndex}-${commandIndex}`;
             return /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(
               SlashCommandItem,
               {
@@ -8035,9 +8040,11 @@ var CommandList = (0, import_react57.forwardRef)(function CommandList2(props, re
                 selectedCommandIndex,
                 selectItem: () => selectItem(groupIndex, commandIndex),
                 editor,
-                activeCommandRef
+                activeCommandRef,
+                hoveredItemKey,
+                onHover: (isHovered) => setHoveredItemKey(isHovered ? itemKey : null)
               },
-              commandIndex
+              itemKey
             );
           }) })
         ] }, groupIndex))
