@@ -2577,6 +2577,7 @@ function getNewWidth(height, aspectRatio) {
 import { Fragment as Fragment3, jsx as jsx17, jsxs as jsxs9 } from "react/jsx-runtime";
 var MIN_WIDTH = 20;
 var IMAGE_MAX_WIDTH = 600;
+var IMAGE_MAX_HEIGHT = 400;
 function ImageView(props) {
   const { node, updateAttributes: updateAttributes2, selected, editor } = props;
   const [status, setStatus] = useState4("idle");
@@ -2601,11 +2602,13 @@ function ImageView(props) {
       event.preventDefault();
       const direction = event.currentTarget.dataset.direction || "--";
       const initialXPosition = event.clientX;
+      const initialYPosition = event.clientY;
       const currentWidth = imgRef.current.width;
       const currentHeight = imgRef.current.height;
       let newWidth = currentWidth;
       let newHeight = currentHeight;
-      const transform = direction[1] === "w" ? -1 : 1;
+      const transformX = direction[1] === "w" ? -1 : 1;
+      const transformY = direction[0] === "n" ? -1 : 1;
       const removeListeners = () => {
         window.removeEventListener("mousemove", mouseMoveHandler);
         window.removeEventListener("mouseup", removeListeners);
@@ -2615,13 +2618,22 @@ function ImageView(props) {
       };
       const mouseMoveHandler = (event2) => {
         newWidth = Math.max(
-          currentWidth + transform * (event2.clientX - initialXPosition),
+          currentWidth + transformX * (event2.clientX - initialXPosition),
+          MIN_WIDTH
+        );
+        newHeight = Math.max(
+          currentHeight + transformY * (event2.clientY - initialYPosition),
           MIN_WIDTH
         );
         if (newWidth > imageParentWidth) {
           newWidth = imageParentWidth;
         }
-        newHeight = newWidth / currentWidth * currentHeight;
+        if (newHeight > IMAGE_MAX_HEIGHT) {
+          newHeight = IMAGE_MAX_HEIGHT;
+        }
+        if (node.attrs.lockAspectRatio) {
+          newHeight = getNewHeight(newWidth, node.attrs.aspectRatio);
+        }
         setResizingStyle({ width: newWidth, height: newHeight });
         if (!event2.buttons) {
           return removeListeners();
@@ -4973,11 +4985,14 @@ function ImageBubbleMenu(props) {
                 value: (_c = state == null ? void 0 : state.width) != null ? _c : "",
                 onValueChange: (value) => {
                   const width = Math.min(Number(value) || 0, IMAGE_MAX_WIDTH);
+                  const currentHeight = Number(state.height) || 0;
+                  const currentWidth = Number(state.width) || 0;
+                  const currentAspectRatio = state.aspectRatio || currentWidth / currentHeight || 1;
                   editor == null ? void 0 : editor.chain().updateAttributes("image", __spreadValues({
                     width: String(width)
                   }, lockAspectRatio && value ? {
                     height: String(
-                      getNewHeight(width, state.aspectRatio)
+                      getNewHeight(width, currentAspectRatio)
                     )
                   } : {})).run();
                 }
@@ -4990,11 +5005,14 @@ function ImageBubbleMenu(props) {
                 value: (_d = state == null ? void 0 : state.height) != null ? _d : "",
                 onValueChange: (value) => {
                   const height = Number(value) || 0;
+                  const currentHeight = Number(state.height) || 0;
+                  const currentWidth = Number(state.width) || 0;
+                  const currentAspectRatio = state.aspectRatio || currentWidth / currentHeight || 1;
                   editor == null ? void 0 : editor.chain().updateAttributes("image", __spreadValues({
                     height: String(height)
                   }, lockAspectRatio && value ? {
                     width: String(
-                      getNewWidth(height, state.aspectRatio)
+                      getNewWidth(height, currentAspectRatio)
                     )
                   } : {})).run();
                 }

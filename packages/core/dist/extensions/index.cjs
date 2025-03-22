@@ -4150,6 +4150,7 @@ function getNewHeight(width, aspectRatio) {
 var import_jsx_runtime32 = require("react/jsx-runtime");
 var MIN_WIDTH = 20;
 var IMAGE_MAX_WIDTH = 600;
+var IMAGE_MAX_HEIGHT = 400;
 function ImageView(props) {
   const { node, updateAttributes: updateAttributes2, selected, editor } = props;
   const [status, setStatus] = (0, import_react22.useState)("idle");
@@ -4174,11 +4175,13 @@ function ImageView(props) {
       event.preventDefault();
       const direction = event.currentTarget.dataset.direction || "--";
       const initialXPosition = event.clientX;
+      const initialYPosition = event.clientY;
       const currentWidth = imgRef.current.width;
       const currentHeight = imgRef.current.height;
       let newWidth = currentWidth;
       let newHeight = currentHeight;
-      const transform = direction[1] === "w" ? -1 : 1;
+      const transformX = direction[1] === "w" ? -1 : 1;
+      const transformY = direction[0] === "n" ? -1 : 1;
       const removeListeners = () => {
         window.removeEventListener("mousemove", mouseMoveHandler);
         window.removeEventListener("mouseup", removeListeners);
@@ -4188,13 +4191,22 @@ function ImageView(props) {
       };
       const mouseMoveHandler = (event2) => {
         newWidth = Math.max(
-          currentWidth + transform * (event2.clientX - initialXPosition),
+          currentWidth + transformX * (event2.clientX - initialXPosition),
+          MIN_WIDTH
+        );
+        newHeight = Math.max(
+          currentHeight + transformY * (event2.clientY - initialYPosition),
           MIN_WIDTH
         );
         if (newWidth > imageParentWidth) {
           newWidth = imageParentWidth;
         }
-        newHeight = newWidth / currentWidth * currentHeight;
+        if (newHeight > IMAGE_MAX_HEIGHT) {
+          newHeight = IMAGE_MAX_HEIGHT;
+        }
+        if (node.attrs.lockAspectRatio) {
+          newHeight = getNewHeight(newWidth, node.attrs.aspectRatio);
+        }
         setResizingStyle({ width: newWidth, height: newHeight });
         if (!event2.buttons) {
           return removeListeners();
