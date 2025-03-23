@@ -1,0 +1,71 @@
+name: Build Packages
+
+on:
+  push:
+    tags:
+      - 'v*-core'    # matches v1.2.3-novu.1-core
+      - 'v*-render'  # matches v0.5.0-novu.1-render
+    paths:
+      - 'packages/**'
+      - '.github/workflows/build-core.yml'
+  pull_request:
+    paths:
+      - 'packages/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+          
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Determine package
+        id: package
+        run: |
+          if [[ ${{ github.ref }} == *-core ]]; then
+            echo "package=core" >> $GITHUB_OUTPUT
+          elif [[ ${{ github.ref }} == *-render ]]; then
+            echo "package=render" >> $GITHUB_OUTPUT
+          fi
+
+      # Run tests for PR checks
+      - name: Run PR tests
+        if: github.event_name == 'pull_request'
+        run: |
+          pnpm --filter @maily-to/core test
+          pnpm --filter @maily-to/render test
+
+      # Run tests and build for releases
+      - name: Build and test package
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          if [ "${{ steps.package.outputs.package }}" == "core" ]; then
+            pnpm --filter @maily-to/core test
+            pnpm --filter @maily-to/core build
+          elif [ "${{ steps.package.outputs.package }}" == "render" ]; then
+            pnpm --filter @maily-to/render test
+            pnpm --filter @maily-to/render build
+          fi
+
+      - name: Create release branch and commit dist
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git checkout -b release/${{ github.ref_name }}
+          git add packages/${{ steps.package.outputs.package }}/dist -f
+          git commit -m "chore: add dist files for ${{ github.ref_name }} [skip ci]" || echo "No changes to commit"
+          git push origin release/${{ github.ref_name }}
