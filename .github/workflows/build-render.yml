@@ -2,6 +2,12 @@ name: Build Render Package
 
 on:
   push:
+    tags:
+      - 'v*'
+    paths:
+      - 'packages/render/**'
+      - '.github/workflows/build-render.yml'
+  pull_request:
     paths:
       - 'packages/render/**'
       - '.github/workflows/build-render.yml'
@@ -31,11 +37,13 @@ jobs:
         
       - name: Build render package
         run: pnpm --filter @maily-to/render build
-        
-      - name: Commit and push dist
+
+      - name: Create release branch and commit dist
+        if: startsWith(github.ref, 'refs/tags/v')
         run: |
           git config --global user.name 'GitHub Actions'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git checkout -b release/${{ github.ref_name }}
           git add packages/render/dist -f
-          git commit -m "chore: update dist files [skip ci]" || echo "No changes to commit"
-          git push
+          git commit -m "chore: add dist files for ${{ github.ref_name }} [skip ci]" || echo "No changes to commit"
+          git push origin release/${{ github.ref_name }}

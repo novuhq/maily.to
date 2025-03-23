@@ -2,6 +2,12 @@ name: Build Core Package
 
 on:
   push:
+    tags:
+      - 'v*'
+    paths:
+      - 'packages/core/**'
+      - '.github/workflows/build-core.yml'
+  pull_request:
     paths:
       - 'packages/core/**'
       - '.github/workflows/build-core.yml'
@@ -31,11 +37,13 @@ jobs:
         
       - name: Build core package
         run: pnpm --filter @maily-to/core build
-        
-      - name: Commit and push dist
+
+      - name: Create release branch and commit dist
+        if: startsWith(github.ref, 'refs/tags/v')
         run: |
           git config --global user.name 'GitHub Actions'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git checkout -b release/${{ github.ref_name }}
           git add packages/core/dist -f
-          git commit -m "chore: update dist files [skip ci]" || echo "No changes to commit"
-          git push
+          git commit -m "chore: add dist files for ${{ github.ref_name }} [skip ci]" || echo "No changes to commit"
+          git push origin release/${{ github.ref_name }}
