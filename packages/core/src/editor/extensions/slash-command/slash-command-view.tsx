@@ -19,6 +19,7 @@ import { DEFAULT_SLASH_COMMANDS } from './default-slash-commands';
 import { TooltipProvider } from '@/editor/components/ui/tooltip';
 import { SlashCommandItem } from './slash-command-item';
 import { searchSlashCommands } from './slash-command-search';
+import { ArrowUp, ArrowDown, CornerDownLeft } from 'lucide-react';
 
 type CommandListProps = {
   items: BlockGroupItem[];
@@ -198,11 +199,14 @@ const CommandList = forwardRef(function CommandList(
             <Fragment key={groupIndex}>
               <span
                 className={cn(
-                  'mly-block mly-border-b mly-border-gray-200 mly-bg-soft-gray mly-p-2 mly-text-xs mly-uppercase mly-text-gray-400',
+                  'mly-flex mly-items-center mly-justify-between mly-self-stretch mly-border mly-border-[#F2F5F8] mly-bg-[#FBFBFB] mly-p-1.5 mly-text-xs mly-uppercase mly-text-gray-400',
                   groupIndex > 0 ? 'mly-border-t' : ''
                 )}
               >
                 {group.title}
+                <div className="mly-pointer-events-none mly-flex mly-h-5 mly-w-5 mly-items-center mly-justify-center mly-rounded-[6px] mly-border mly-border-gray-200 mly-bg-white mly-shadow-[0px_0px_0px_1px_rgba(14,18,27,0.02)_inset,_0px_1px_4px_0px_rgba(14,18,27,0.12)]">
+                  <span className="mly-text-sm mly-text-gray-400">/</span>
+                </div>
               </span>
               <div className="mly-space-y-0.5 mly-p-1">
                 {group.commands.map((item, commandIndex) => {
@@ -229,26 +233,20 @@ const CommandList = forwardRef(function CommandList(
             </Fragment>
           ))}
         </div>
-        <div className="mly-border-t mly-border-gray-200 mly-px-1 mly-py-3 mly-pl-4">
-          <div className="mly-flex mly-items-center">
-            <p className="mly-text-center mly-text-xs mly-text-gray-400">
-              <kbd className="mly-rounded mly-border mly-border-gray-200 mly-p-1 mly-px-2 mly-font-medium">
-                ↑
-              </kbd>
-              <kbd className="mly-ml-1 mly-rounded mly-border mly-border-gray-200 mly-p-1 mly-px-2 mly-font-medium">
-                ↓
-              </kbd>{' '}
-              to navigate
-            </p>
-            <span aria-hidden="true" className="mly-select-none mly-px-1">
-              ·
+        <div className="mly-flex mly-justify-between mly-rounded-b-md mly-border-t mly-border-gray-100 mly-bg-white mly-p-1.5">
+          <div className="mly-flex mly-items-center mly-gap-0.5">
+            <div className="mly-pointer-events-none mly-flex mly-h-5 mly-w-5 mly-items-center mly-justify-center mly-rounded-[6px] mly-border mly-border-gray-200 mly-bg-white mly-shadow-[0px_0px_0px_1px_rgba(14,18,27,0.02)_inset,_0px_1px_4px_0px_rgba(14,18,27,0.12)]">
+              <ArrowUp className="mly-h-3 mly-w-3 mly-text-gray-400" />
+            </div>
+            <div className="mly-pointer-events-none mly-flex mly-h-5 mly-w-5 mly-items-center mly-justify-center mly-rounded-[6px] mly-border mly-border-gray-200 mly-bg-white mly-shadow-[0px_0px_0px_1px_rgba(14,18,27,0.02)_inset,_0px_1px_4px_0px_rgba(14,18,27,0.12)]">
+              <ArrowDown className="mly-h-3 mly-w-3 mly-text-gray-400" />
+            </div>
+            <span className="mly-ml-1.5 mly-text-xs mly-font-normal mly-text-gray-500">
+              Navigate
             </span>
-            <p className="mly-text-center mly-text-xs mly-text-gray-400">
-              <kbd className="mly-rounded mly-border mly-border-gray-200 mly-p-1 mly-px-1.5 mly-font-medium">
-                Enter
-              </kbd>{' '}
-              to select
-            </p>
+          </div>
+          <div className="mly-pointer-events-none mly-flex mly-h-5 mly-w-5 mly-items-center mly-justify-center mly-rounded-[6px] mly-border mly-border-gray-200 mly-bg-white mly-shadow-[0px_0px_0px_1px_rgba(14,18,27,0.02)_inset,_0px_1px_4px_0px_rgba(14,18,27,0.12)]">
+            <CornerDownLeft className="mly-h-3 mly-w-3 mly-text-gray-400" />
           </div>
         </div>
       </div>
