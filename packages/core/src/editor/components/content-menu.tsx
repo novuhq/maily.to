@@ -121,8 +121,6 @@ export function ContentMenu(props: ContentMenuProps) {
       tippyOptions={{
         offset: [2, 0],
         zIndex: 99,
-        duration: 2000,
-        animation: 'none',
       }}
       onNodeChange={handleNodeChange}
       className={cn(editor.isEditable ? 'mly-visible' : 'mly-hidden')}
