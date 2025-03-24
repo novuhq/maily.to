@@ -12,6 +12,7 @@ coverage
 .next/
 out/
 dist
+**/dist/**
 build
 .vercel
 
