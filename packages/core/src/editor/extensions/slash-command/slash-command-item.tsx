@@ -6,7 +6,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/editor/components/ui/tooltip';
-import { useCallback, useState, useRef, useEffect, useMemo } from 'react';
+import { useCallback, useState, useRef, useEffect } from 'react';
 import { cn } from '@/editor/utils/classname';
 
 type SlashCommandItemProps = {
@@ -74,15 +74,51 @@ export function SlashCommandItem(props: SlashCommandItemProps) {
     value = renderFunctionValue!;
   }
 
+  const checkVisibility = useCallback(() => {
+    const container = document.querySelector('#slash-command');
+    if (!container) return false;
+
+    // Find the button by a unique data attribute
+    const button = container.querySelector(`[data-item-key="${itemKey}"]`);
+    if (!button) return false;
+
+    const buttonRect = button.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+
+    // Check if the button is fully visible within the container
+    return (
+      buttonRect.top >= containerRect.top &&
+      buttonRect.bottom <= containerRect.bottom
+    );
+  }, [itemKey]);
+
+  useEffect(() => {
+    const container = document.querySelector('#slash-command');
+    if (!container) return;
+
+    const handleScroll = () => {
+      if (!checkVisibility() && open) {
+        setOpen(false);
+      }
+    };
+
+    container.addEventListener('scroll', handleScroll);
+    return () => {
+      container.removeEventListener('scroll', handleScroll);
+    };
+  }, [open, checkVisibility]);
+
   const openTimerRef = useRef<number>(0);
   const handleDelayedOpen = useCallback(() => {
     window.clearTimeout(openTimerRef.current);
     const delay = 200;
     openTimerRef.current = window.setTimeout(() => {
-      setOpen(true);
+      if (checkVisibility()) {
+        setOpen(true);
+      }
       openTimerRef.current = 0;
     }, delay);
-  }, [setOpen]);
+  }, [checkVisibility]);
 
   useEffect(() => {
     if (shouldOpenTooltip) {
@@ -92,7 +128,7 @@ export function SlashCommandItem(props: SlashCommandItemProps) {
       openTimerRef.current = 0;
       setOpen(false);
     }
-  }, [shouldOpenTooltip]);
+  }, [shouldOpenTooltip, handleDelayedOpen]);
 
   useEffect(() => {
     return () => {
@@ -104,7 +140,7 @@ export function SlashCommandItem(props: SlashCommandItemProps) {
   }, []);
 
   return (
-    <Tooltip open={open} key={`${groupIndex}-${commandIndex}`}>
+    <Tooltip open={open}>
       <TooltipTrigger asChild>
         <button
           className={cn(
@@ -118,6 +154,7 @@ export function SlashCommandItem(props: SlashCommandItemProps) {
           onMouseLeave={() => onHover(false)}
           type="button"
           ref={isActive ? activeCommandRef : null}
+          data-item-key={itemKey}
         >
           {value}
         </button>
