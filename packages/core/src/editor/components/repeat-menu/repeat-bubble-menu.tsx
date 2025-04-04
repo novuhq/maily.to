@@ -20,8 +20,10 @@ import { getClosestNodeByName } from '@/editor/utils/columns';
 import { processVariables } from '@/editor/utils/variable';
 import { useVariableOptions } from '@/editor/utils/node-options';
 
-export function RepeatBubbleMenu(props: EditorBubbleMenuProps) {
-  const { appendTo, editor } = props;
+export function RepeatBubbleMenu(
+  props: EditorBubbleMenuProps & { config?: { description?: React.ReactNode } }
+) {
+  const { appendTo, editor, config } = props;
   if (!editor) {
     return null;
   }
@@ -94,93 +96,98 @@ export function RepeatBubbleMenu(props: EditorBubbleMenuProps) {
   return (
     <BubbleMenu
       {...bubbleMenuProps}
-      className="mly-flex mly-items-stretch mly-rounded-lg mly-border mly-border-gray-200 mly-bg-white mly-p-0.5 mly-shadow-md"
+      className="mly-rounded-lg mly-border mly-border-gray-200 mly-bg-white mly-p-0.5 mly-shadow-md"
     >
       <TooltipProvider>
-        <div className="mly-flex mly-items-center mly-gap-1.5 mly-px-1.5 mly-text-sm mly-leading-none">
-          Repeat
-          <Tooltip>
-            <TooltipTrigger>
-              <InfoIcon
-                className={cn('mly-size-3 mly-stroke-[2.5] mly-text-gray-500')}
-              />
-            </TooltipTrigger>
-            <TooltipContent
-              sideOffset={14}
-              className="mly-max-w-[260px]"
-              align="start"
+        <div className="mly-flex mly-items-stretch">
+          <div className="mly-flex mly-items-center mly-gap-1.5 mly-px-1.5 mly-text-sm mly-leading-none">
+            Repeat
+            <Tooltip>
+              <TooltipTrigger>
+                <InfoIcon
+                  className={cn(
+                    'mly-size-3 mly-stroke-[2.5] mly-text-gray-500'
+                  )}
+                />
+              </TooltipTrigger>
+              <TooltipContent
+                sideOffset={14}
+                className="mly-max-w-[260px]"
+                align="start"
+              >
+                Ensure the selected variable is iterable, such as an array of
+                objects.
+              </TooltipContent>
+            </Tooltip>
+          </div>
+          {!isUpdatingKey && (
+            <button
+              onClick={() => {
+                setIsUpdatingKey(true);
+                setTimeout(() => {
+                  inputRef.current?.focus();
+                }, 0);
+              }}
             >
-              Ensure the selected variable is iterable, such as an array of
-              objects.
-            </TooltipContent>
-          </Tooltip>
-        </div>
-        {!isUpdatingKey && (
-          <button
-            onClick={() => {
-              setIsUpdatingKey(true);
-              setTimeout(() => {
-                inputRef.current?.focus();
-              }, 0);
-            }}
-          >
-            {renderVariable({
-              variable: {
-                name: state?.each,
-                valid: isValidEachKey,
-              },
-              fallback: '',
-              from: 'bubble-variable',
-              editor,
-            })}
-          </button>
-        )}
-        {isUpdatingKey && (
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              setIsUpdatingKey(false);
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Escape') {
-                setIsUpdatingKey(false);
-              }
-            }}
-          >
-            <InputAutocomplete
-              editor={editor}
-              placeholder="ie. payload.items"
-              value={state?.each || ''}
-              onValueChange={(value) => {
-                editor.commands.updateRepeat({
-                  each: value,
-                });
-              }}
-              onOutsideClick={() => {
+              {renderVariable({
+                variable: {
+                  name: state?.each,
+                  valid: isValidEachKey,
+                },
+                fallback: '',
+                from: 'bubble-variable',
+                editor,
+              })}
+            </button>
+          )}
+          {isUpdatingKey && (
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
                 setIsUpdatingKey(false);
               }}
-              onSelectOption={(value) => {
-                editor.commands.updateRepeat({
-                  each: value,
-                });
-                setIsUpdatingKey(false);
+              onKeyDown={(e) => {
+                if (e.key === 'Escape') {
+                  setIsUpdatingKey(false);
+                }
               }}
-              autoCompleteOptions={autoCompleteOptions}
-              ref={inputRef}
-            />
-          </form>
-        )}
+            >
+              <InputAutocomplete
+                editor={editor}
+                placeholder="ie. payload.items"
+                value={state?.each || ''}
+                onValueChange={(value) => {
+                  editor.commands.updateRepeat({
+                    each: value,
+                  });
+                }}
+                onOutsideClick={() => {
+                  setIsUpdatingKey(false);
+                }}
+                onSelectOption={(value) => {
+                  editor.commands.updateRepeat({
+                    each: value,
+                  });
+                  setIsUpdatingKey(false);
+                }}
+                autoCompleteOptions={autoCompleteOptions}
+                ref={inputRef}
+              />
+            </form>
+          )}
 
-        <Divider />
-        <ShowPopover
-          showIfKey={state.currentShowIfKey}
-          onShowIfKeyValueChange={(value) => {
-            editor.commands.updateRepeat({
-              showIfKey: value,
-            });
-          }}
-          editor={editor}
-        />
+          <Divider />
+          <ShowPopover
+            showIfKey={state.currentShowIfKey}
+            onShowIfKeyValueChange={(value) => {
+              editor.commands.updateRepeat({
+                showIfKey: value,
+              });
+            }}
+            editor={editor}
+          />
+        </div>
+        {config?.description && config.description}
       </TooltipProvider>
     </BubbleMenu>
   );
