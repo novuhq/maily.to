@@ -48,7 +48,7 @@ export type EditorProps = {
     immediatelyRender?: boolean;
   };
   repeatMenuConfig?: {
-    description?: React.ReactNode;
+    description?: (editor: TiptapEditor) => React.ReactNode;
   };
   editable?: boolean;
 } & ParitialMailContextType;
