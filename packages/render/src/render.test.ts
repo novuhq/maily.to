@@ -222,4 +222,46 @@ describe('render', () => {
     expect(result).toContain('color:rgb(0, 255, 0)');
     expect(result).toContain('font-size:18px');
   });
+
+  it('should render repeated content with iterations limit', async () => {
+    const content = {
+      type: 'doc',
+      content: [
+        {
+          type: 'repeat',
+          attrs: {
+            each: 'items',
+            iterations: 2,
+            showIfKey: '',
+          },
+          content: [
+            {
+              type: 'paragraph',
+              content: [
+                {
+                  type: 'text',
+                  text: 'Item: ',
+                },
+                {
+                  type: 'variable',
+                  attrs: {
+                    id: '$value',
+                    fallback: 'Unknown',
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+
+    const maily = new Maily(content);
+    maily.setPayloadValue('items', ['First', 'Second', 'Third']);
+    const result = await maily.render({
+      plainText: true,
+    });
+
+    expect(result).toMatchInlineSnapshot(`"Item: First\n\nItem: Second"`);
+  });
 });

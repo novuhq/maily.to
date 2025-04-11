@@ -8,6 +8,7 @@ type RepeatAttributes = {
   each: string;
   isUpdatingKey: boolean;
   showIfKey: string;
+  iterations: number;
 };
 
 declare module '@tiptap/core' {
@@ -61,6 +62,21 @@ export const RepeatExtension = Node.create({
 
           return {
             'data-show-if-key': attributes.showIfKey,
+          };
+        },
+      },
+      iterations: {
+        default: 0,
+        parseHTML: (element) => {
+          return parseInt(element.getAttribute('data-iterations') || '0', 10);
+        },
+        renderHTML(attributes) {
+          if (!attributes.iterations) {
+            return {};
+          }
+
+          return {
+            'data-iterations': attributes.iterations,
           };
         },
       },

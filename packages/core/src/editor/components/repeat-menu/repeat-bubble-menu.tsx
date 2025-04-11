@@ -5,7 +5,7 @@ import {
   Editor as TiptapEditor,
   findChildren,
 } from '@tiptap/react';
-import { InfoIcon } from 'lucide-react';
+import { InfoIcon, Repeat2 } from 'lucide-react';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { sticky } from 'tippy.js';
 import { getRenderContainer } from '../../utils/get-render-container';
@@ -13,6 +13,7 @@ import { ShowPopover } from '../show-popover';
 import { EditorBubbleMenuProps } from '../text-menu/text-bubble-menu';
 import { Divider } from '../ui/divider';
 import { InputAutocomplete } from '../ui/input-autocomplete';
+import { NumberInput } from '../ui/number-input';
 import {
   Tooltip,
   TooltipContent,
@@ -182,6 +183,20 @@ export function RepeatBubbleMenu(
             </form>
           )}
 
+          <Divider />
+          <div className="mly-flex mly-items-center mly-gap-1.5 mly-px-1.5">
+            <NumberInput
+              value={state.iterations}
+              onValueChange={(value) => {
+                editor.commands.updateRepeat({
+                  iterations: value,
+                });
+              }}
+              icon={Repeat2}
+              tooltip="Limit the number of items shown (0 or empty shows all items)"
+              max={99}
+            />
+          </div>
           <Divider />
           <ShowPopover
             showIfKey={state.currentShowIfKey}
