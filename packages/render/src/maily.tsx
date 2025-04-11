@@ -1663,7 +1663,7 @@ export class Maily {
 
   private repeat(node: JSONContent, options?: NodeOptions): JSX.Element {
     const { attrs } = node;
-    const { each = '' } = attrs || {};
+    const { each = '', iterations = 0 } = attrs || {};
 
     const shouldShow = this.shouldShow(node, options);
     if (!shouldShow) {
@@ -1678,9 +1678,17 @@ export class Maily {
       throw new Error(`Payload value for each "${each}" is not an array`);
     }
 
+    // If iterations is 0 or not set, use all values
+    // Otherwise use the specified number of iterations
+    const repeatCount = iterations === 0 ? values.length : iterations;
+    const repeatedValues = Array.from(
+      { length: repeatCount },
+      (_, i) => values[i % values.length] || {}
+    );
+
     return (
       <>
-        {values.map((value) => {
+        {repeatedValues.map((value) => {
           return (
             <Fragment key={generateKey()}>
               {this.getMappedContent(node, {
