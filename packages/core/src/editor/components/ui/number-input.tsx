@@ -32,9 +32,12 @@ export const NumberInput = forwardRef<HTMLLabelElement, NumberInputProps>(
           // adding `+ ''` to convert number to string so that number don't have leading zero(0)
           value={value === 0 ? '' : value + ''}
           placeholder="-"
-          onChange={(e) =>
-            onValueChange(e.target.value === '' ? 0 : Number(e.target.value))
-          }
+          onChange={(e) => {
+            const newValue = e.target.value === '' ? 0 : Number(e.target.value);
+            onValueChange(
+              max !== undefined ? Math.min(newValue, max) : newValue
+            );
+          }}
           onFocus={(e) => e.target.select()}
           className="hide-number-controls focus-visible:outline-none mly-h-5 mly-w-8 mly-rounded-md mly-bg-soft-gray mly-px-1.5 mly-text-center mly-text-xs mly-tabular-nums mly-text-midnight-gray placeholder:mly-text-midnight-gray"
         />
