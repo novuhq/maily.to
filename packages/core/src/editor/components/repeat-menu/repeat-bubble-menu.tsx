@@ -1,10 +1,6 @@
 import { cn } from '@/editor/utils/classname';
 import { isTextSelected } from '@/editor/utils/is-text-selected';
-import {
-  BubbleMenu,
-  Editor as TiptapEditor,
-  findChildren,
-} from '@tiptap/react';
+import { BubbleMenu, Editor, findChildren } from '@tiptap/react';
 import { InfoIcon, Repeat2 } from 'lucide-react';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { sticky } from 'tippy.js';
@@ -25,12 +21,8 @@ import { getClosestNodeByName } from '@/editor/utils/columns';
 import { processVariables } from '@/editor/utils/variable';
 import { useVariableOptions } from '@/editor/utils/node-options';
 
-export function RepeatBubbleMenu(
-  props: EditorBubbleMenuProps & {
-    config?: { description?: (editor: TiptapEditor) => React.ReactNode };
-  }
-) {
-  const { appendTo, editor, config } = props;
+export function RepeatBubbleMenu(props: EditorBubbleMenuProps) {
+  const { appendTo, editor } = props;
   if (!editor) {
     return null;
   }
@@ -108,12 +100,12 @@ export function RepeatBubbleMenu(
       <TooltipProvider>
         <div className="mly-flex mly-items-stretch">
           <div className="mly-flex mly-items-center mly-gap-1.5 mly-px-1.5 mly-text-sm mly-leading-none">
-            Repeat
+            Repeat for
             <Tooltip>
               <TooltipTrigger>
                 <InfoIcon
                   className={cn(
-                    'mly-size-3 mly-stroke-[2.5] mly-text-gray-500'
+                    'mly-size-3 mly-stroke-[2.5] mly-text-gray-400'
                   )}
                 />
               </TooltipTrigger>
@@ -122,68 +114,71 @@ export function RepeatBubbleMenu(
                 className="mly-max-w-[260px]"
                 align="start"
               >
-                Ensure the selected variable is iterable, such as an array of
-                objects.
+                Loops through each item in the selected iterable variable.
               </TooltipContent>
             </Tooltip>
           </div>
-          {!isUpdatingKey && (
-            <button
-              onClick={() => {
-                setIsUpdatingKey(true);
-                setTimeout(() => {
-                  inputRef.current?.focus();
-                }, 0);
-              }}
-            >
-              {renderVariable({
-                variable: {
-                  name: state?.each,
-                  valid: isValidEachKey,
-                },
-                fallback: '',
-                from: 'bubble-variable',
-                editor,
-              })}
-            </button>
-          )}
-          {isUpdatingKey && (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                setIsUpdatingKey(false);
-              }}
-              onKeyDown={(e) => {
-                if (e.key === 'Escape') {
-                  setIsUpdatingKey(false);
-                }
-              }}
-            >
-              <InputAutocomplete
-                editor={editor}
-                placeholder="ie. payload.items"
-                value={state?.each || ''}
-                onValueChange={(value) => {
-                  editor.commands.updateRepeat({
-                    each: value,
-                  });
+          <div className="mly-flex mly-items-center mly-gap-1.5 mly-px-1.5 mly-text-sm">
+            {!isUpdatingKey && (
+              <button
+                onClick={() => {
+                  setIsUpdatingKey(true);
+                  setTimeout(() => {
+                    inputRef.current?.focus();
+                  }, 0);
                 }}
-                onOutsideClick={() => {
+                className="mly-flex mly-items-center"
+              >
+                {renderVariable({
+                  variable: {
+                    name: state?.each,
+                    valid: isValidEachKey,
+                  },
+                  fallback: '',
+                  from: 'bubble-variable',
+                  editor,
+                })}
+              </button>
+            )}
+            {isUpdatingKey && (
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
                   setIsUpdatingKey(false);
                 }}
-                onSelectOption={(value) => {
-                  editor.commands.updateRepeat({
-                    each: value,
-                  });
-                  setIsUpdatingKey(false);
+                onKeyDown={(e) => {
+                  if (e.key === 'Escape') {
+                    setIsUpdatingKey(false);
+                  }
                 }}
-                autoCompleteOptions={autoCompleteOptions}
-                ref={inputRef}
-              />
-            </form>
-          )}
+              >
+                <InputAutocomplete
+                  className="mly-flex mly-h-5 mly-items-center"
+                  editor={editor}
+                  placeholder="ie. payload.items"
+                  value={state?.each || ''}
+                  onValueChange={(value) => {
+                    editor.commands.updateRepeat({
+                      each: value,
+                    });
+                  }}
+                  onOutsideClick={() => {
+                    setIsUpdatingKey(false);
+                  }}
+                  onSelectOption={(value) => {
+                    editor.commands.updateRepeat({
+                      each: value,
+                    });
+                    setIsUpdatingKey(false);
+                  }}
+                  autoCompleteOptions={autoCompleteOptions}
+                  ref={inputRef}
+                />
+              </form>
+            )}
+          </div>
 
-          <Divider />
+          <Divider className="mly-bg-gray-100" />
           <div className="mly-flex mly-items-center mly-gap-1.5 mly-px-1.5">
             <NumberInput
               value={state.iterations}
@@ -197,7 +192,7 @@ export function RepeatBubbleMenu(
               max={99}
             />
           </div>
-          <Divider />
+          <Divider className="mly-bg-gray-100" />
           <ShowPopover
             showIfKey={state.currentShowIfKey}
             onShowIfKeyValueChange={(value) => {
@@ -208,7 +203,6 @@ export function RepeatBubbleMenu(
             editor={editor}
           />
         </div>
-        {config?.description && config.description(editor)}
       </TooltipProvider>
     </BubbleMenu>
   );
