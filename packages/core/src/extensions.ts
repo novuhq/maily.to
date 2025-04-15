@@ -6,6 +6,7 @@ export * from './editor/extensions/maily-kit';
 export * from './editor/extensions/placeholder';
 export * from './editor/extensions/slash-command/slash-command';
 export * from './editor/extensions/slash-command/slash-command-view';
+export * from './editor/extensions/slash-command/slash-command-search';
 export * from './editor/nodes/button/button';
 export * from './editor/nodes/columns/column';
 export * from './editor/nodes/columns/columns';
