@@ -263,6 +263,20 @@ export const ButtonExtension = Node.create({
           };
         },
       },
+      width: {
+        default: 'auto',
+        parseHTML: (element) => {
+          return (
+            element.getAttribute('data-width') ||
+            DEFAULT_BUTTON_PADDING_LEFT.toString()
+          );
+        },
+        renderHTML: (attributes) => {
+          return {
+            'data-width': attributes.width,
+          };
+        },
+      },
     };
   },
 
