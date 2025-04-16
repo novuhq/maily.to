@@ -42,6 +42,7 @@ export type ButtonAttributes = {
   paddingRight: number;
   paddingBottom: number;
   paddingLeft: number;
+  width: number | string;
 };
 
 declare module '@tiptap/core' {

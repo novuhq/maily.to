@@ -1,6 +1,6 @@
 import { cn } from '@/editor/utils/classname';
 import { isTextSelected } from '@/editor/utils/is-text-selected';
-import { BubbleMenu, Editor, findChildren } from '@tiptap/react';
+import { BubbleMenu, findChildren } from '@tiptap/react';
 import { InfoIcon, Repeat2 } from 'lucide-react';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { sticky } from 'tippy.js';

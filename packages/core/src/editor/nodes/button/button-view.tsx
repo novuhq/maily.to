@@ -40,6 +40,7 @@ export function ButtonView(props: NodeViewProps) {
     paddingRight,
     paddingBottom,
     paddingLeft,
+    width,
   } = node.attrs as ButtonAttributes;
 
   const opts = useVariableOptions(editor);
@@ -109,6 +110,7 @@ export function ButtonView(props: NodeViewProps) {
                   paddingRight,
                   paddingBottom,
                   paddingLeft,
+                  width,
                 } as CSSProperties
               }
               onClick={(e) => {
