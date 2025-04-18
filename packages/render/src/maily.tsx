@@ -1020,6 +1020,7 @@ export class Maily {
       paddingRight = DEFAULT_BUTTON_PADDING_RIGHT,
       paddingBottom = DEFAULT_BUTTON_PADDING_BOTTOM,
       paddingLeft = DEFAULT_BUTTON_PADDING_LEFT,
+      width,
     } = attrs || {};
 
     const shouldShow = this.shouldShow(node, options);
@@ -1065,10 +1066,12 @@ export class Maily {
             borderWidth: '2px',
             borderStyle: 'solid',
             textDecoration: 'none',
+            boxSizing: 'border-box',
             fontSize: '14px',
             fontWeight: 500,
             borderRadius: radius,
             padding: `${paddingTop}px ${paddingRight}px ${paddingBottom}px ${paddingLeft}px`,
+            width,
           }}
         >
           {text}
