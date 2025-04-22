@@ -1,6 +1,10 @@
 import { cn } from '@/editor/utils/classname';
 import { isTextSelected } from '@/editor/utils/is-text-selected';
-import { BubbleMenu, findChildren } from '@tiptap/react';
+import {
+  BubbleMenu,
+  Editor as TiptapEditor,
+  findChildren,
+} from '@tiptap/react';
 import { InfoIcon, Repeat2 } from 'lucide-react';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { sticky } from 'tippy.js';
@@ -21,8 +25,12 @@ import { getClosestNodeByName } from '@/editor/utils/columns';
 import { processVariables } from '@/editor/utils/variable';
 import { useVariableOptions } from '@/editor/utils/node-options';
 
-export function RepeatBubbleMenu(props: EditorBubbleMenuProps) {
-  const { appendTo, editor } = props;
+export function RepeatBubbleMenu(
+  props: EditorBubbleMenuProps & {
+    config?: { description?: (editor: TiptapEditor) => React.ReactNode };
+  }
+) {
+  const { appendTo, editor, config } = props;
   if (!editor) {
     return null;
   }
@@ -203,6 +211,7 @@ export function RepeatBubbleMenu(props: EditorBubbleMenuProps) {
             editor={editor}
           />
         </div>
+        {config?.description && config.description(editor)}
       </TooltipProvider>
     </BubbleMenu>
   );

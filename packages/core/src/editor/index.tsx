@@ -72,6 +72,7 @@ export function Editor(props: EditorProps) {
     blocks = DEFAULT_SLASH_COMMANDS,
     editable = true,
     placeholderUrl = DEFAULT_PLACEHOLDER_URL,
+    repeatMenuConfig,
   } = props;
 
   const formattedContent = useMemo(() => {
@@ -153,7 +154,11 @@ export function Editor(props: EditorProps) {
           <ColumnsBubbleMenu editor={editor} appendTo={menuContainerRef} />
           <ContentMenu editor={editor} />
           <VariableBubbleMenu editor={editor} appendTo={menuContainerRef} />
-          <RepeatBubbleMenu editor={editor} appendTo={menuContainerRef} />
+          <RepeatBubbleMenu
+            editor={editor}
+            appendTo={menuContainerRef}
+            config={repeatMenuConfig}
+          />
           <HTMLBubbleMenu editor={editor} appendTo={menuContainerRef} />
           <InlineImageBubbleMenu editor={editor} appendTo={menuContainerRef} />
         </div>
