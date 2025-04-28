@@ -16,6 +16,7 @@ import { useVariableOptions } from '@/editor/utils/node-options';
 import { NodeViewProps, NodeViewWrapper } from '@tiptap/react';
 import { CSSProperties, useMemo } from 'react';
 import {
+  AllowedButtonBorderRadius,
   allowedButtonBorderRadius,
   AllowedButtonVariant,
   allowedButtonVariant,
@@ -24,7 +25,7 @@ import {
 import { ButtonLabelInput } from './button-label-input';
 
 export function ButtonView(props: NodeViewProps) {
-  const { node, editor, getPos, updateAttributes } = props;
+  const { node, editor, getPos } = props;
   const {
     text,
     isTextVariable,
@@ -147,7 +148,7 @@ export function ButtonView(props: NodeViewProps) {
               <ButtonLabelInput
                 value={text}
                 onValueChange={(value, isVariable) => {
-                  updateAttributes({
+                  editor.commands.updateButton({
                     text: value,
                     isTextVariable: isVariable ?? false,
                   });
@@ -167,8 +168,8 @@ export function ButtonView(props: NodeViewProps) {
                     label: value,
                   }))}
                   onValueChange={(value) => {
-                    updateAttributes({
-                      borderRadius: value,
+                    editor.commands.updateButton({
+                      borderRadius: value as AllowedButtonBorderRadius,
                     });
                   }}
                   tooltip="Border Radius"
@@ -183,8 +184,8 @@ export function ButtonView(props: NodeViewProps) {
                     label: value,
                   }))}
                   onValueChange={(value) => {
-                    updateAttributes({
-                      variant: value,
+                    editor.commands.updateButton({
+                      variant: value as AllowedButtonVariant,
                     });
                   }}
                   tooltip="Style"
@@ -203,7 +204,7 @@ export function ButtonView(props: NodeViewProps) {
                     const { paddingX, paddingY } =
                       sizes[value as 'small' | 'medium' | 'large'];
 
-                    updateAttributes({
+                    editor.commands.updateButton({
                       paddingTop: paddingY,
                       paddingRight: paddingX,
                       paddingBottom: paddingY,
@@ -220,7 +221,7 @@ export function ButtonView(props: NodeViewProps) {
                 <AlignmentSwitch
                   alignment={alignment}
                   onAlignmentChange={(alignment) => {
-                    updateAttributes({
+                    editor.commands.updateButton({
                       alignment,
                     });
                   }}
@@ -229,7 +230,7 @@ export function ButtonView(props: NodeViewProps) {
                 <LinkInputPopover
                   defaultValue={externalLink || ''}
                   onValueChange={(value, isVariable) => {
-                    updateAttributes({
+                    editor.commands.updateButton({
                       url: value,
                       isUrlVariable: isVariable ?? false,
                     });
@@ -247,7 +248,7 @@ export function ButtonView(props: NodeViewProps) {
                   variant={variant}
                   color={buttonColor}
                   onChange={(color) => {
-                    updateAttributes({
+                    editor.commands.updateButton({
                       buttonColor: color,
                     });
                   }}
@@ -256,7 +257,7 @@ export function ButtonView(props: NodeViewProps) {
                 <TextColorPickerPopup
                   color={textColor}
                   onChange={(color) => {
-                    updateAttributes({
+                    editor.commands.updateButton({
                       textColor: color,
                     });
                   }}
@@ -268,7 +269,7 @@ export function ButtonView(props: NodeViewProps) {
               <ShowPopover
                 showIfKey={showIfKey}
                 onShowIfKeyValueChange={(value) => {
-                  updateAttributes({
+                  editor.commands.updateButton({
                     showIfKey: value,
                   });
                 }}
