@@ -49,7 +49,7 @@ declare module '@tiptap/core' {
   interface Commands<ReturnType> {
     button: {
       setButton: () => ReturnType;
-      updateButton: (attrs: Partial<ButtonAttributes>) => ReturnType;
+      updateButtonAttributes: (attrs: Partial<ButtonAttributes>) => ReturnType;
     };
   }
 }
@@ -308,7 +308,7 @@ export const ButtonExtension = Node.create({
             content: [],
           });
         },
-      updateButton: (attrs) => updateAttributes(this.name, attrs),
+      updateButtonAttributes: (attrs) => updateAttributes(this.name, attrs),
     };
   },
 

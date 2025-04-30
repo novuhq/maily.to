@@ -2,8 +2,33 @@ import TiptapImage from '@tiptap/extension-image';
 import { ReactNodeViewRenderer } from '@tiptap/react';
 import { DEFAULT_SECTION_SHOW_IF_KEY } from '../section/section';
 import { ImageView } from './image-view';
+import { updateAttributes } from '@/editor/utils/update-attribute';
 
 const DEFAULT_IMAGE_BORDER_RADIUS = 0;
+
+export type ImageAttributes = {
+  src: string;
+  isSrcVariable?: boolean;
+  alt?: string;
+  title?: string;
+  externalLink?: string;
+  isExternalLinkVariable?: boolean;
+  alignment?: 'left' | 'center' | 'right';
+  borderRadius?: number;
+  width?: string | number;
+  height?: string | number;
+  aspectRatio?: number;
+  lockAspectRatio?: boolean;
+  showIfKey?: string;
+};
+
+declare module '@tiptap/core' {
+  interface Commands<ReturnType> {
+    imageOverride: {
+      updateImageAttributes: (attrs: Partial<ImageAttributes>) => ReturnType;
+    };
+  }
+}
 
 export const ImageExtension = TiptapImage.extend({
   addAttributes() {
@@ -162,6 +187,16 @@ export const ImageExtension = TiptapImage.extend({
           };
         },
       },
+    };
+  },
+  addCommands() {
+    return {
+      ...this.parent?.(),
+      updateImageAttributes:
+        (attributes) =>
+        ({ chain }) => {
+          return chain().updateAttributes(this.name, attributes).run();
+        },
     };
   },
   addNodeView() {

@@ -104,24 +104,10 @@ export function TextBubbleContent(props: TextBubbleContentProps) {
       <LinkInputPopover
         defaultValue={state?.linkUrl ?? ''}
         onValueChange={(value, isVariable) => {
-          if (!value) {
-            editor
-              ?.chain()
-              .focus()
-              .extendMarkRange('link')
-              .unsetLink()
-              .unsetUnderline()
-              .run();
-            return;
-          }
-
-          editor
-            ?.chain()
-            .extendMarkRange('link')
-            .setLink({ href: value })
-            .setIsUrlVariable(isVariable ?? false)
-            .setUnderline()
-            .run()!;
+          editor?.commands.updateLinkAttributes({
+            href: value,
+            isUrlVariable: isVariable ?? false,
+          });
         }}
         tooltip="External URL"
         editor={editor}

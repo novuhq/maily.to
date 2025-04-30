@@ -1,9 +1,17 @@
 import TiptapLink from '@tiptap/extension-link';
 
+export type LinkAttributes = {
+  href: string;
+  target?: string | null;
+  rel?: string | null;
+  class?: string | null;
+  isUrlVariable?: boolean;
+};
+
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
     customLink: {
-      setIsUrlVariable: (isUrlVariable: boolean) => ReturnType;
+      updateLinkAttributes: (attributes: LinkAttributes) => ReturnType;
     };
   }
 }
@@ -21,10 +29,25 @@ export const LinkExtension = TiptapLink.extend({
     return {
       ...this.parent?.(),
 
-      setIsUrlVariable:
-        (isUrlVariable) =>
+      updateLinkAttributes:
+        (attributes) =>
         ({ chain }) => {
-          return chain().setMark('link', { isUrlVariable }).run();
+          const { isUrlVariable, href, ...attrs } = attributes;
+          if (!href) {
+            return chain()
+              .focus()
+              .extendMarkRange('link')
+              .unsetLink()
+              .unsetUnderline()
+              .run();
+          }
+
+          return chain()
+            .extendMarkRange('link')
+            .setLink({ href, ...attrs })
+            .setMark('link', { isUrlVariable: isUrlVariable ?? false })
+            .setUnderline()
+            .run();
         },
     };
   },

@@ -148,7 +148,7 @@ export function ButtonView(props: NodeViewProps) {
               <ButtonLabelInput
                 value={text}
                 onValueChange={(value, isVariable) => {
-                  editor.commands.updateButton({
+                  editor.commands.updateButtonAttributes({
                     text: value,
                     isTextVariable: isVariable ?? false,
                   });
@@ -168,7 +168,7 @@ export function ButtonView(props: NodeViewProps) {
                     label: value,
                   }))}
                   onValueChange={(value) => {
-                    editor.commands.updateButton({
+                    editor.commands.updateButtonAttributes({
                       borderRadius: value as AllowedButtonBorderRadius,
                     });
                   }}
@@ -184,7 +184,7 @@ export function ButtonView(props: NodeViewProps) {
                     label: value,
                   }))}
                   onValueChange={(value) => {
-                    editor.commands.updateButton({
+                    editor.commands.updateButtonAttributes({
                       variant: value as AllowedButtonVariant,
                     });
                   }}
@@ -204,7 +204,7 @@ export function ButtonView(props: NodeViewProps) {
                     const { paddingX, paddingY } =
                       sizes[value as 'small' | 'medium' | 'large'];
 
-                    editor.commands.updateButton({
+                    editor.commands.updateButtonAttributes({
                       paddingTop: paddingY,
                       paddingRight: paddingX,
                       paddingBottom: paddingY,
@@ -221,7 +221,7 @@ export function ButtonView(props: NodeViewProps) {
                 <AlignmentSwitch
                   alignment={alignment}
                   onAlignmentChange={(alignment) => {
-                    editor.commands.updateButton({
+                    editor.commands.updateButtonAttributes({
                       alignment,
                     });
                   }}
@@ -230,7 +230,7 @@ export function ButtonView(props: NodeViewProps) {
                 <LinkInputPopover
                   defaultValue={externalLink || ''}
                   onValueChange={(value, isVariable) => {
-                    editor.commands.updateButton({
+                    editor.commands.updateButtonAttributes({
                       url: value,
                       isUrlVariable: isVariable ?? false,
                     });
@@ -248,7 +248,7 @@ export function ButtonView(props: NodeViewProps) {
                   variant={variant}
                   color={buttonColor}
                   onChange={(color) => {
-                    editor.commands.updateButton({
+                    editor.commands.updateButtonAttributes({
                       buttonColor: color,
                     });
                   }}
@@ -257,7 +257,7 @@ export function ButtonView(props: NodeViewProps) {
                 <TextColorPickerPopup
                   color={textColor}
                   onChange={(color) => {
-                    editor.commands.updateButton({
+                    editor.commands.updateButtonAttributes({
                       textColor: color,
                     });
                   }}
@@ -269,7 +269,7 @@ export function ButtonView(props: NodeViewProps) {
               <ShowPopover
                 showIfKey={showIfKey}
                 onShowIfKeyValueChange={(value) => {
-                  editor.commands.updateButton({
+                  editor.commands.updateButtonAttributes({
                     showIfKey: value,
                   });
                 }}

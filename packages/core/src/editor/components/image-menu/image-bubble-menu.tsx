@@ -14,10 +14,7 @@ import { Select } from '../ui/select';
 import { TooltipProvider } from '../ui/tooltip';
 import { ImageSize } from './image-size';
 import { useImageState } from './use-image-state';
-import {
-  IMAGE_MAX_HEIGHT,
-  IMAGE_MAX_WIDTH,
-} from '@/editor/nodes/image/image-view';
+import { IMAGE_MAX_WIDTH } from '@/editor/nodes/image/image-view';
 
 export function ImageBubbleMenu(props: EditorBubbleMenuProps) {
   const { editor, appendTo } = props;
@@ -69,7 +66,7 @@ export function ImageBubbleMenu(props: EditorBubbleMenuProps) {
                 editor
                   ?.chain()
                   .focus()
-                  .setLogoAttributes({ size: value as AllowedLogoSize })
+                  .updateLogoAttributes({ size: value as AllowedLogoSize })
                   .run();
               }}
             />
@@ -84,12 +81,16 @@ export function ImageBubbleMenu(props: EditorBubbleMenuProps) {
             onAlignmentChange={(alignment) => {
               const isCurrentNodeImage = state.isImageActive;
               if (!isCurrentNodeImage) {
-                editor?.chain().focus().setLogoAttributes({ alignment }).run();
+                editor
+                  ?.chain()
+                  .focus()
+                  .updateLogoAttributes({ alignment })
+                  .run();
               } else {
                 editor
                   ?.chain()
                   .focus()
-                  .updateAttributes('image', { alignment })
+                  .updateImageAttributes({ alignment })
                   .run();
               }
             }}
@@ -101,7 +102,7 @@ export function ImageBubbleMenu(props: EditorBubbleMenuProps) {
               if (state.isLogoActive) {
                 editor
                   ?.chain()
-                  .setLogoAttributes({
+                  .updateLogoAttributes({
                     src: value,
                     isSrcVariable: isVariable ?? false,
                   })
@@ -109,7 +110,7 @@ export function ImageBubbleMenu(props: EditorBubbleMenuProps) {
               } else {
                 editor
                   ?.chain()
-                  .updateAttributes('image', {
+                  .updateImageAttributes({
                     src: value,
                     isSrcVariable: isVariable ?? false,
                   })
@@ -128,7 +129,7 @@ export function ImageBubbleMenu(props: EditorBubbleMenuProps) {
               onValueChange={(value, isVariable) => {
                 editor
                   ?.chain()
-                  .updateAttributes('image', {
+                  .updateImageAttributes({
                     externalLink: value,
                     isExternalLinkVariable: isVariable ?? false,
                   })
@@ -155,7 +156,7 @@ export function ImageBubbleMenu(props: EditorBubbleMenuProps) {
               onValueChange={(value) => {
                 editor
                   ?.chain()
-                  .updateAttributes('image', {
+                  .updateImageAttributes({
                     borderRadius: Number(value),
                   })
                   .run();
@@ -177,7 +178,7 @@ export function ImageBubbleMenu(props: EditorBubbleMenuProps) {
 
                   editor
                     ?.chain()
-                    .updateAttributes('image', {
+                    .updateImageAttributes({
                       width: String(width),
                       ...(lockAspectRatio && value
                         ? {
@@ -202,7 +203,7 @@ export function ImageBubbleMenu(props: EditorBubbleMenuProps) {
 
                   editor
                     ?.chain()
-                    .updateAttributes('image', {
+                    .updateImageAttributes({
                       height: String(height),
                       ...(lockAspectRatio && value
                         ? {
@@ -225,7 +226,7 @@ export function ImageBubbleMenu(props: EditorBubbleMenuProps) {
 
                   editor
                     ?.chain()
-                    .updateAttributes('image', {
+                    .updateImageAttributes({
                       lockAspectRatio: !lockAspectRatio,
                       aspectRatio,
                     })
@@ -242,9 +243,19 @@ export function ImageBubbleMenu(props: EditorBubbleMenuProps) {
         <ShowPopover
           showIfKey={state.currentShowIfKey}
           onShowIfKeyValueChange={(value) => {
+            if (state.isLogoActive) {
+              editor
+                ?.chain()
+                .updateLogoAttributes({
+                  showIfKey: value,
+                })
+                .run();
+              return;
+            }
+
             editor
               ?.chain()
-              .updateAttributes(state.isLogoActive ? 'logo' : 'image', {
+              .updateImageAttributes({
                 showIfKey: value,
               })
               .run();

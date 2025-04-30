@@ -52,7 +52,7 @@ export function InlineImageBubbleMenu(props: EditorBubbleMenuProps) {
             onValueChange={(value, isVariable) => {
               editor
                 ?.chain()
-                .updateAttributes('inlineImage', {
+                .updateInlineImageAttributes({
                   src: value,
                   isSrcVariable: isVariable ?? false,
                 })
@@ -69,7 +69,7 @@ export function InlineImageBubbleMenu(props: EditorBubbleMenuProps) {
             onValueChange={(value, isVariable) => {
               editor
                 ?.chain()
-                .updateAttributes('inlineImage', {
+                .updateInlineImageAttributes({
                   externalLink: value,
                   isExternalLinkVariable: isVariable ?? false,
                 })
@@ -86,7 +86,7 @@ export function InlineImageBubbleMenu(props: EditorBubbleMenuProps) {
             onValueChange={(value) => {
               editor
                 ?.chain()
-                .updateAttributes('inlineImage', {
+                .updateInlineImageAttributes({
                   width: value || DEFAULT_INLINE_IMAGE_WIDTH,
                   height: value || DEFAULT_INLINE_IMAGE_HEIGHT,
                 })
