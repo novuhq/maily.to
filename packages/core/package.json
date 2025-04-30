@@ -1,7 +1,7 @@
 {
   "name": "@maily-to/core",
   "type": "module",
-  "version": "0.2.7-novu.12-core",
+  "version": "0.2.7-novu.13-core",
   "description": "Powerful editor for creating beautiful, pre-designed, mobile-ready emails.",
   "private": false,
   "main": "./dist/index.cjs",
