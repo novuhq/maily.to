@@ -166,7 +166,7 @@ export function RepeatBubbleMenu(
                   placeholder="ie. payload.items"
                   value={state?.each || ''}
                   onValueChange={(value) => {
-                    editor.commands.updateRepeat({
+                    editor.commands.updateRepeatAttributes({
                       each: value,
                     });
                   }}
@@ -174,7 +174,7 @@ export function RepeatBubbleMenu(
                     setIsUpdatingKey(false);
                   }}
                   onSelectOption={(value) => {
-                    editor.commands.updateRepeat({
+                    editor.commands.updateRepeatAttributes({
                       each: value,
                     });
                     setIsUpdatingKey(false);
@@ -191,7 +191,7 @@ export function RepeatBubbleMenu(
             <NumberInput
               value={state.iterations}
               onValueChange={(value) => {
-                editor.commands.updateRepeat({
+                editor.commands.updateRepeatAttributes({
                   iterations: value,
                 });
               }}
@@ -204,7 +204,7 @@ export function RepeatBubbleMenu(
           <ShowPopover
             showIfKey={state.currentShowIfKey}
             onShowIfKeyValueChange={(value) => {
-              editor.commands.updateRepeat({
+              editor.commands.updateRepeatAttributes({
                 showIfKey: value,
               });
             }}

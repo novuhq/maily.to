@@ -30,7 +30,7 @@ declare module '@tiptap/core' {
   interface Commands<ReturnType> {
     logo: {
       setLogoImage: (options: LogoOptions) => ReturnType;
-      setLogoAttributes: (attributes: Partial<LogoAttributes>) => ReturnType;
+      updateLogoAttributes: (attributes: Partial<LogoAttributes>) => ReturnType;
     };
   }
 }
@@ -130,10 +130,10 @@ export const LogoExtension = TiptapImage.extend({
             attrs: options,
           });
         },
-      setLogoAttributes:
+      updateLogoAttributes:
         (attributes) =>
-        ({ commands }) => {
-          return commands.updateAttributes('logo', attributes);
+        ({ chain }) => {
+          return chain().updateAttributes(this.name, attributes).run();
         },
     };
   },

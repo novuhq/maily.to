@@ -8,7 +8,7 @@ import { useImageUploadOptions } from '@/editor/extensions/image-upload/image-up
 import { cn } from '@/editor/utils/classname';
 
 export function LogoView(props: NodeViewProps) {
-  const { node, editor, updateAttributes } = props;
+  const { node, editor } = props;
 
   const [status, setStatus] = useState<ImageStatus>('idle');
   const [isPlaceholderImage, setIsPlaceholderImage] = useState(false);
@@ -46,7 +46,7 @@ export function LogoView(props: NodeViewProps) {
       try {
         setStatus('loading');
         const imageUrl = await onImageUpload(file);
-        updateAttributes({ src: imageUrl });
+        editor.chain().updateLogoAttributes({ src: imageUrl }).run();
         setIsPlaceholderImage(false);
         setStatus('loaded');
       } catch (error) {
@@ -54,7 +54,7 @@ export function LogoView(props: NodeViewProps) {
         setStatus('error');
       }
     },
-    [onImageUpload, updateAttributes]
+    [onImageUpload]
   );
 
   const handleDragOver = useCallback(

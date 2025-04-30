@@ -12,14 +12,22 @@ export interface InlineImageOptions {
 
 export interface InlineImageAttributes {
   src: string;
+  isSrcVariable?: boolean;
   alt?: string;
   title?: string;
+  externalLink?: string;
+  isExternalLinkVariable?: boolean;
+  height?: string | number;
+  width?: string | number;
 }
 
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
     inlineImage: {
       setInlineImage: (options: InlineImageAttributes) => ReturnType;
+      updateInlineImageAttributes: (
+        attrs: Partial<InlineImageAttributes>
+      ) => ReturnType;
     };
   }
 }
@@ -126,6 +134,11 @@ export const InlineImageExtension = Node.create<InlineImageOptions>({
             type: this.name,
             attrs: options,
           });
+        },
+      updateInlineImageAttributes:
+        (attributes) =>
+        ({ chain }) => {
+          return chain().updateAttributes(this.name, attributes).run();
         },
     };
   },

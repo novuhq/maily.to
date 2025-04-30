@@ -12,6 +12,7 @@ export * from './editor/nodes/columns/column';
 export * from './editor/nodes/columns/columns';
 export * from './editor/nodes/footer';
 export * from './editor/nodes/image/image';
+export * from './editor/nodes/inline-image/inline-image';
 export * from './editor/nodes/link';
 export * from './editor/nodes/logo/logo';
 export * from './editor/nodes/repeat/repeat';

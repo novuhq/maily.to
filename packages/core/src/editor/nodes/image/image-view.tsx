@@ -19,7 +19,7 @@ export const IMAGE_MAX_HEIGHT = 400;
 export type ImageStatus = 'idle' | 'loading' | 'loaded' | 'error';
 
 export function ImageView(props: NodeViewProps) {
-  const { node, updateAttributes, selected, editor } = props;
+  const { node, selected, editor } = props;
 
   const [status, setStatus] = useState<ImageStatus>('idle');
   const [isPlaceholderImage, setIsPlaceholderImage] = useState(false);
@@ -66,7 +66,14 @@ export function ImageView(props: NodeViewProps) {
         window.removeEventListener('mousemove', mouseMoveHandler);
         window.removeEventListener('mouseup', removeListeners);
         const aspectRatio = getAspectRatio(newWidth, newHeight);
-        updateAttributes({ width: newWidth, height: newHeight, aspectRatio });
+        editor
+          .chain()
+          .updateImageAttributes({
+            width: newWidth,
+            height: newHeight,
+            aspectRatio,
+          })
+          .run();
         setResizingStyle(undefined);
       };
 
@@ -176,7 +183,7 @@ export function ImageView(props: NodeViewProps) {
       try {
         setStatus('loading');
         const imageUrl = await onImageUpload(file);
-        updateAttributes({ src: imageUrl });
+        editor.chain().updateImageAttributes({ src: imageUrl }).run();
         setIsPlaceholderImage(false);
         setStatus('loaded');
       } catch (error) {
@@ -184,7 +191,7 @@ export function ImageView(props: NodeViewProps) {
         setStatus('error');
       }
     },
-    [onImageUpload, updateAttributes]
+    [onImageUpload]
   );
 
   // load the image using new Image() to avoid layout shift
@@ -219,11 +226,14 @@ export function ImageView(props: NodeViewProps) {
         naturalHeight
       );
 
-      updateAttributes({
-        width: Math.min(wrapperWidth, naturalWidth),
-        height: Math.min(calculatedHeight, naturalHeight),
-        aspectRatio,
-      });
+      editor
+        .chain()
+        .updateImageAttributes({
+          width: Math.min(wrapperWidth, naturalWidth),
+          height: Math.min(calculatedHeight, naturalHeight),
+          aspectRatio,
+        })
+        .run();
     };
     img.onerror = () => {
       setStatus('error');

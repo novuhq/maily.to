@@ -15,7 +15,7 @@ declare module '@tiptap/core' {
   interface Commands<ReturnType> {
     repeat: {
       setRepeat: () => ReturnType;
-      updateRepeat: (attrs: Partial<RepeatAttributes>) => ReturnType;
+      updateRepeatAttributes: (attrs: Partial<RepeatAttributes>) => ReturnType;
     };
   }
 }
@@ -116,7 +116,7 @@ export const RepeatExtension = Node.create({
             ],
           });
         },
-      updateRepeat: (attrs) => updateAttributes(this.name, attrs),
+      updateRepeatAttributes: (attrs) => updateAttributes(this.name, attrs),
     };
   },
 
