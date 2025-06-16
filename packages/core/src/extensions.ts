@@ -2,6 +2,7 @@ export * from './editor/extensions/color';
 export * from './editor/extensions/horizontal-rule';
 export * from './editor/extensions/image-upload/image-upload';
 export * from './editor/plugins/image-upload/image-upload-plugin';
+export * from './editor/extensions/inline-decorator';
 export * from './editor/extensions/maily-kit';
 export * from './editor/extensions/placeholder';
 export * from './editor/extensions/slash-command/slash-command';

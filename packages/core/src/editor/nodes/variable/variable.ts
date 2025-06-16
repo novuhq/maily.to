@@ -8,6 +8,11 @@ import {
   VariableSuggestionsPopoverType,
 } from './variable-suggestions-popover';
 import { DefaultRenderVariable, VariableView } from './variable-view';
+import { registerSuggestionProvider } from '../../bubble-suggestions';
+import { createVariableProvider } from '../../bubble-suggestions/providers/variable-provider';
+
+// Register the provider at module level so it's available immediately
+registerSuggestionProvider('variable', createVariableProvider);
 
 export type Variable = {
   name: string;

@@ -12,7 +12,6 @@ import { LinkInputPopover } from '@/editor/components/ui/link-input-popover';
 import { Select } from '@/editor/components/ui/select';
 import { TooltipProvider } from '@/editor/components/ui/tooltip';
 import { cn } from '@/editor/utils/classname';
-import { useVariableOptions } from '@/editor/utils/node-options';
 import { NodeViewProps, NodeViewWrapper } from '@tiptap/react';
 import { CSSProperties, useMemo } from 'react';
 import {
@@ -23,6 +22,10 @@ import {
   ButtonAttributes,
 } from './button';
 import { ButtonLabelInput } from './button-label-input';
+import {
+  useSuggestionProviders,
+  useMatchingProvider,
+} from '@/editor/bubble-suggestions';
 
 export function ButtonView(props: NodeViewProps) {
   const { node, editor, getPos } = props;
@@ -44,8 +47,12 @@ export function ButtonView(props: NodeViewProps) {
     width,
   } = node.attrs as ButtonAttributes;
 
-  const opts = useVariableOptions(editor);
-  const renderVariable = opts?.renderVariable;
+  // Use the new bubble suggestion system for rendering variables
+  const providers = useSuggestionProviders(editor, [
+    'variable',
+    'inlineDecorator',
+  ]);
+  const matchingProvider = useMatchingProvider(text, providers);
 
   const sizes = useMemo(
     () => ({
@@ -124,13 +131,8 @@ export function ButtonView(props: NodeViewProps) {
                 editor.commands.setNodeSelection(pos);
               }}
             >
-              {isTextVariable
-                ? renderVariable({
-                    variable: { name: text, valid: true },
-                    fallback: text,
-                    from: 'button-variable',
-                    editor,
-                  })
+              {matchingProvider
+                ? matchingProvider.renderValue(text, editor, 'button-variable')
                 : text}
             </button>
           </div>
