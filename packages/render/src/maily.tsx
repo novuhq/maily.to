@@ -156,6 +156,7 @@ export interface MailyConfig {
 const DEFAULT_RENDER_OPTIONS: RenderOptions = {
   pretty: false,
   plainText: false,
+  noHtmlWrappingTags: false,
 };
 
 const DEFAULT_THEME: ThemeOptions = {
@@ -271,6 +272,12 @@ export interface RenderOptions {
    */
   pretty?: boolean;
   plainText?: boolean;
+  /**
+   * If `true`, the output will not have any HTML wrapping tags.
+   *
+   * Default: `false`
+   */
+  noHtmlWrappingTags?: boolean;
 }
 
 export type VariableFormatter = (options: {
@@ -478,10 +485,11 @@ export class Maily {
     }
   }
 
-  async render(
-    options: RenderOptions = DEFAULT_RENDER_OPTIONS
-  ): Promise<string> {
-    const markup = this.markup();
+  async render({
+    noHtmlWrappingTags,
+    ...options
+  }: RenderOptions = DEFAULT_RENDER_OPTIONS): Promise<string> {
+    const markup = this.markup({ noHtmlWrappingTags });
 
     return reactEmailRenderAsync(markup, options);
   }
@@ -490,7 +498,7 @@ export class Maily {
    * `markup` will render the JSON content into React Email markup.
    * and return the raw React Tree.
    */
-  markup() {
+  markup({ noHtmlWrappingTags }: Pick<RenderOptions, 'noHtmlWrappingTags'>) {
     const nodes = this.content.content || [];
     const jsxNodes = nodes.map((node, index) => {
       const nodeOptions: NodeOptions = {
@@ -511,7 +519,25 @@ export class Maily {
     const tags = meta(this.meta);
     const htmlProps = this.htmlProps;
 
-    const markup = (
+    const markup = noHtmlWrappingTags ? (
+      <Fragment>
+        {preview ? (
+          <Preview id="__react-email-preview">{preview}</Preview>
+        ) : null}
+        {jsxNodes}
+        {this.openTrackingPixel ? (
+          <Img
+            alt=""
+            src={this.openTrackingPixel}
+            style={{
+              display: 'none',
+              width: '1px',
+              height: '1px',
+            }}
+          />
+        ) : null}
+      </Fragment>
+    ) : (
       <Html {...htmlProps}>
         <Head>
           <Font
