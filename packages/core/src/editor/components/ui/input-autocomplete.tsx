@@ -5,7 +5,7 @@ import { useVariableOptions } from '@/editor/utils/node-options';
 import { useOutsideClick } from '@/editor/utils/use-outside-click';
 import { Editor } from '@tiptap/core';
 import { CornerDownLeft } from 'lucide-react';
-import { forwardRef, HTMLAttributes, useRef } from 'react';
+import { forwardRef, HTMLAttributes, useRef, useCallback } from 'react';
 
 type InputAutocompleteProps = HTMLAttributes<HTMLInputElement> & {
   value: string;
@@ -42,9 +42,12 @@ export const InputAutocomplete = forwardRef<
   const VariableSuggestionPopoverComponent =
     useVariableOptions(editor)?.variableSuggestionsPopover;
 
-  useOutsideClick(containerRef, () => {
+  // Memoize the outside click callback to prevent dependency array changes
+  const handleOutsideClick = useCallback(() => {
     onOutsideClick?.();
-  });
+  }, [onOutsideClick]);
+
+  useOutsideClick(containerRef, handleOutsideClick);
 
   const isTriggeringVariable = value.startsWith(triggerChar);
 
@@ -89,7 +92,7 @@ export const InputAutocomplete = forwardRef<
         </div>
       </label>
 
-      {isTriggeringVariable && (
+      {isTriggeringVariable && VariableSuggestionPopoverComponent && (
         <div className="mly-absolute mly-left-0 mly-top-8">
           <VariableSuggestionPopoverComponent
             items={autoCompleteOptions.map((option) => {
