@@ -1,4 +1,4 @@
-import { useVariableOptions } from '@/editor/utils/node-options';
+import { useInlineDecoratorOptions } from '@/editor/utils/node-options';
 import { ReactRenderer } from '@tiptap/react';
 import { SuggestionOptions } from '@tiptap/suggestion';
 import { forwardRef, useImperativeHandle, useRef, useMemo } from 'react';
@@ -80,7 +80,7 @@ export const InlineDecoratorList = forwardRef<any, InlineDecoratorListProps>(
 
     const popoverRef = useRef<VariableSuggestionsPopoverRef>(null);
     const VariableSuggestionPopoverComponent =
-      useVariableOptions(editor)?.variableSuggestionsPopover;
+      useInlineDecoratorOptions(editor)?.variableSuggestionsPopover;
 
     // Transform items for the popover component
     const transformedItems = useMemo(

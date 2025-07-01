@@ -9,6 +9,10 @@ import { DefaultInlineDecoratorComponent } from './default-decorator-component';
 import { registerSuggestionProvider } from '../../bubble-suggestions';
 import { createInlineDecoratorProvider } from '../../bubble-suggestions/providers/inline-decorator-provider';
 import { Editor } from '@tiptap/core';
+import {
+  VariableSuggestionsPopover,
+  VariableSuggestionsPopoverType,
+} from '../../nodes/variable/variable-suggestions-popover';
 
 // Register the provider at module level so it's available immediately
 registerSuggestionProvider('inlineDecorator', createInlineDecoratorProvider);
@@ -40,6 +44,12 @@ export type InlineDecoratorOptions = {
   decoratorComponent: React.ComponentType<InlineDecoratorComponentProps>;
   /** Suggestion configuration */
   suggestion: Omit<SuggestionOptions, 'editor'>;
+  /**
+   * Variable suggestion popover is the component that will be used to render
+   * the inline decorator suggestions for the content, bubble menu inline decorators
+   * @default VariableSuggestionsPopover
+   */
+  variableSuggestionsPopover: VariableSuggestionsPopoverType;
 };
 
 const InlineDecoratorPluginKey = new PluginKey('inlineDecorator');
@@ -62,19 +72,39 @@ function createDecoratorRegex(
   return new RegExp(`${escapedTrigger}(.*?)${escapedClosing}`, 'g');
 }
 
-/** Updates decorator text at a specific position in the editor */
+/** Updates decorator text by finding the original key and replacing it */
 function updateDecoratorText(
   editor: Editor,
-  from: number,
-  to: number,
+  originalKey: string,
   newKey: string,
   options: InlineDecoratorOptions
 ) {
-  const { state, dispatch } = editor.view;
-  const { tr } = state;
+  const originalPattern = options.formatPattern(originalKey);
   const newPattern = options.formatPattern(newKey);
-  tr.replaceWith(from, to, state.schema.text(newPattern));
-  if (dispatch) dispatch(tr);
+
+  editor
+    .chain()
+    .command(({ tr, state }) => {
+      let found = false;
+
+      state.doc.descendants((node, pos) => {
+        if (found || !node.isText || !node.text) return;
+
+        const nodeText = node.text;
+        const index = nodeText.indexOf(originalPattern);
+
+        if (index !== -1) {
+          const actualFrom = pos + index;
+          const actualTo = actualFrom + originalPattern.length;
+
+          tr.replaceWith(actualFrom, actualTo, state.schema.text(newPattern));
+          found = true;
+        }
+      });
+
+      return found;
+    })
+    .run();
 }
 
 /** Deletes decorator text at a specific position in the editor */
@@ -118,11 +148,16 @@ function createDecoratorWidget(
   key: string,
   options: InlineDecoratorOptions
 ) {
+  // Create a ref to track the current key
+  let currentKey = key;
+
   const renderer = new ReactRenderer(options.decoratorComponent, {
     props: {
       decoratorKey: key,
-      onUpdate: (newKey: string) =>
-        updateDecoratorText(editor, from, to, newKey, options),
+      onUpdate: (newKey: string) => {
+        updateDecoratorText(editor, currentKey, newKey, options);
+        currentKey = newKey; // Update the tracked key
+      },
       onDelete: () => deleteDecoratorText(editor, from, to),
     },
     editor,
@@ -151,6 +186,7 @@ export const InlineDecoratorExtension =
 
         // Default component and suggestion config
         decoratorComponent: DefaultInlineDecoratorComponent,
+        variableSuggestionsPopover: VariableSuggestionsPopover,
         suggestion: {
           char: '',
           pluginKey: InlineDecoratorSuggestionPluginKey,

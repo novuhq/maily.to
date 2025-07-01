@@ -1,11 +1,21 @@
 import { VariableSuggestionsPopoverRef } from '@/editor/nodes/variable/variable-suggestions-popover';
 import { cn } from '@/editor/utils/classname';
 import { AUTOCOMPLETE_PASSWORD_MANAGERS_OFF } from '@/editor/utils/constants';
-import { useVariableOptions } from '@/editor/utils/node-options';
+import {
+  useVariableOptions,
+  useInlineDecoratorOptions,
+} from '@/editor/utils/node-options';
 import { useOutsideClick } from '@/editor/utils/use-outside-click';
 import { Editor } from '@tiptap/core';
 import { CornerDownLeft } from 'lucide-react';
-import { forwardRef, HTMLAttributes, useRef, useState, useEffect } from 'react';
+import {
+  forwardRef,
+  HTMLAttributes,
+  useRef,
+  useState,
+  useEffect,
+  useMemo,
+} from 'react';
 import {
   useSuggestionProviders,
   useActiveSuggestion,
@@ -50,9 +60,20 @@ export const SuggestionInput = forwardRef<
   const providers = useSuggestionProviders(editor, enabledProviders);
   const activeSuggestion = useActiveSuggestion(value, providers);
 
-  // Get the variable popover component for rendering (reuse existing UI)
-  const VariableSuggestionPopoverComponent =
-    useVariableOptions(editor)?.variableSuggestionsPopover;
+  // Get the appropriate popover component based on the active provider
+  const VariableSuggestionPopoverComponent = useMemo(() => {
+    if (!activeSuggestion) {
+      return useVariableOptions(editor)?.variableSuggestionsPopover;
+    }
+
+    // Use inline decorator popover for inline decorator suggestions
+    if (activeSuggestion.provider.name === 'inlineDecorator') {
+      return useInlineDecoratorOptions(editor)?.variableSuggestionsPopover;
+    }
+
+    // Default to variable popover for other providers
+    return useVariableOptions(editor)?.variableSuggestionsPopover;
+  }, [activeSuggestion, editor]);
 
   useOutsideClick(containerRef, () => {
     onOutsideClick?.();
