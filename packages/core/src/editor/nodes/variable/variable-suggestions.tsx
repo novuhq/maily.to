@@ -22,8 +22,9 @@ export const VariableList = forwardRef((props: VariableListProps, ref) => {
   const { items = [], editor } = props;
 
   const popoverRef = useRef<VariableSuggestionsPopoverRef>(null);
+  const variableOptions = useVariableOptions(editor);
   const VariableSuggestionPopoverComponent =
-    useVariableOptions(editor)?.variableSuggestionsPopover;
+    variableOptions?.variableSuggestionsPopover;
 
   useImperativeHandle(ref, () => ({
     onKeyDown: ({ event }: { event: KeyboardEvent }) => {
@@ -53,10 +54,14 @@ export const VariableList = forwardRef((props: VariableListProps, ref) => {
     },
   }));
 
+  if (!VariableSuggestionPopoverComponent) {
+    return null;
+  }
+
   return (
     <VariableSuggestionPopoverComponent
       items={items}
-      onSelectItem={(value) => {
+      onSelectItem={(value: any) => {
         props.command({
           id: value.name,
           required: value.required ?? true,
@@ -75,9 +80,10 @@ export function getVariableSuggestions(
   return {
     char,
     items: ({ query, editor }) => {
-      const variables = getVariableOptions(editor)?.variables;
+      const variableOptions = getVariableOptions(editor);
+      const variables = variableOptions?.variables;
 
-      return processVariables(variables, {
+      return processVariables(variables || [], {
         query,
         editor,
         from: 'content-variable',

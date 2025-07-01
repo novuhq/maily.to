@@ -6,13 +6,13 @@ import { useMemo } from 'react';
 export function getNodeOptions<T extends Record<string, unknown>>(
   editor: Editor,
   name: string
-): T {
+): T | null {
   const node = editor.extensionManager.extensions.find(
     (extension) => extension.name === name
   );
 
   if (!node) {
-    throw new Error(`Node ${name} not found`);
+    return null;
   }
 
   return node.options as T;

@@ -15,6 +15,7 @@ import {
   useState,
   useEffect,
   useMemo,
+  useCallback,
 } from 'react';
 import {
   useSuggestionProviders,
@@ -60,24 +61,31 @@ export const SuggestionInput = forwardRef<
   const providers = useSuggestionProviders(editor, enabledProviders);
   const activeSuggestion = useActiveSuggestion(value, providers);
 
+  // Always call hooks at the top level - never conditionally
+  const variableOptions = useVariableOptions(editor);
+  const inlineDecoratorOptions = useInlineDecoratorOptions(editor);
+
   // Get the appropriate popover component based on the active provider
   const VariableSuggestionPopoverComponent = useMemo(() => {
     if (!activeSuggestion) {
-      return useVariableOptions(editor)?.variableSuggestionsPopover;
+      return variableOptions?.variableSuggestionsPopover;
     }
 
     // Use inline decorator popover for inline decorator suggestions
     if (activeSuggestion.provider.name === 'inlineDecorator') {
-      return useInlineDecoratorOptions(editor)?.variableSuggestionsPopover;
+      return inlineDecoratorOptions?.variableSuggestionsPopover;
     }
 
     // Default to variable popover for other providers
-    return useVariableOptions(editor)?.variableSuggestionsPopover;
-  }, [activeSuggestion, editor]);
+    return variableOptions?.variableSuggestionsPopover;
+  }, [activeSuggestion, variableOptions, inlineDecoratorOptions]);
 
-  useOutsideClick(containerRef, () => {
+  // Memoize the outside click callback to prevent dependency array changes
+  const handleOutsideClick = useCallback(() => {
     onOutsideClick?.();
-  });
+  }, [onOutsideClick]);
+
+  useOutsideClick(containerRef, handleOutsideClick);
 
   // Load suggestions when active suggestion changes
   useEffect(() => {
