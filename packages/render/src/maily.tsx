@@ -192,6 +192,7 @@ export const DEFAULT_SECTION_BACKGROUND_COLOR = '#ffffff';
 export const DEFAULT_SECTION_ALIGN = 'left';
 export const DEFAULT_SECTION_BORDER_WIDTH = 1;
 export const DEFAULT_SECTION_BORDER_COLOR = '#000000';
+export const DEFAULT_SECTION_BORDER_STYLE = 'solid';
 
 export const DEFAULT_SECTION_MARGIN_TOP = 0;
 export const DEFAULT_SECTION_MARGIN_RIGHT = 0;
@@ -711,7 +712,21 @@ export class Maily {
 
   private paragraph(node: JSONContent, options?: NodeOptions): JSX.Element {
     const { attrs } = node;
-    const alignment = attrs?.textAlign || 'left';
+    const {
+      textAlign = 'left',
+      background = 'transparent',
+      border = 'none',
+      borderRadius = 0,
+      paddingTop = 0,
+      paddingRight = 0,
+      paddingBottom = 0,
+      paddingLeft = 0,
+      fontSize = this.config.theme?.fontSize?.paragraph?.size,
+      lineHeight = this.config.theme?.fontSize?.paragraph?.lineHeight,
+      color = this.config.theme?.colors?.paragraph,
+      display = 'block',
+    } = attrs || {};
+
     const { isParentListItem, shouldRemoveBottomMargin } =
       this.getMarginOverrideConditions(node, options);
 
@@ -725,11 +740,19 @@ export class Maily {
     return (
       <Text
         style={{
-          ...(alignment !== 'left' ? { textAlign: alignment } : {}),
+          textAlign,
           ...antialiased,
-          fontSize: this.config.theme?.fontSize?.paragraph?.size,
-          lineHeight: this.config.theme?.fontSize?.paragraph?.lineHeight,
-          color: this.config.theme?.colors?.paragraph,
+          display,
+          background,
+          border,
+          borderRadius,
+          paddingTop,
+          paddingRight,
+          paddingBottom,
+          paddingLeft,
+          fontSize,
+          lineHeight,
+          color,
           margin: `0 0 ${marginBottom}px 0`,
         }}
       >
@@ -1488,10 +1511,13 @@ export class Maily {
     const { attrs } = node;
     const {
       borderRadius = 0,
+      background,
       backgroundColor = DEFAULT_SECTION_BACKGROUND_COLOR,
+
       align = DEFAULT_SECTION_ALIGN,
       borderWidth = DEFAULT_SECTION_BORDER_WIDTH,
       borderColor = DEFAULT_SECTION_BORDER_COLOR,
+      borderStyle = DEFAULT_SECTION_BORDER_STYLE,
 
       marginTop = DEFAULT_SECTION_MARGIN_TOP,
       marginRight = DEFAULT_SECTION_MARGIN_RIGHT,
@@ -1502,6 +1528,8 @@ export class Maily {
       paddingRight = DEFAULT_SECTION_PADDING_RIGHT,
       paddingBottom = DEFAULT_SECTION_PADDING_BOTTOM,
       paddingLeft = DEFAULT_SECTION_PADDING_LEFT,
+
+      textAlign = 'initial',
     } = attrs || {};
 
     const shouldShow = this.shouldShow(node, options);
@@ -1523,7 +1551,9 @@ export class Maily {
           style={{
             borderColor,
             borderWidth,
-            borderStyle: 'solid',
+            borderStyle,
+
+            background,
             backgroundColor,
             borderRadius,
 
@@ -1531,6 +1561,8 @@ export class Maily {
             paddingRight,
             paddingBottom,
             paddingLeft,
+
+            textAlign,
           }}
         >
           {this.getMappedContent(node, {
