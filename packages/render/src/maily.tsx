@@ -787,7 +787,18 @@ export class Maily {
       );
     }
 
-    return text ? <>{text}</> : <>&nbsp;</>;
+    if (!text) {
+      return <>&nbsp;</>;
+    }
+
+    const shouldDangerouslySetInnerHTML =
+      node.attrs?.shouldDangerouslySetInnerHTML ?? false;
+
+    return shouldDangerouslySetInnerHTML ? (
+      <span dangerouslySetInnerHTML={{ __html: text }} />
+    ) : (
+      <>{text}</>
+    );
   }
 
   private bold(_: MarkType, text: JSX.Element): JSX.Element {
