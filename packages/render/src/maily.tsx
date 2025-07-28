@@ -979,12 +979,32 @@ export class Maily {
     return formattedVariable;
   }
 
-  private horizontalRule(_: JSONContent, __?: NodeOptions): JSX.Element {
+  private horizontalRule(node: JSONContent, __?: NodeOptions): JSX.Element {
+    const DEFAULT_MARGIN_Y = 32;
+    const { attrs } = node;
+    const {
+      marginTop = DEFAULT_MARGIN_Y,
+      marginRight = 0,
+      marginBottom = DEFAULT_MARGIN_Y,
+      marginLeft = 0,
+
+      paddingTop = 0,
+      paddingRight = 0,
+      paddingBottom = 0,
+      paddingLeft = 0,
+    } = attrs || {};
+
     return (
       <Hr
         style={{
-          marginTop: '32px',
-          marginBottom: '32px',
+          marginTop,
+          marginRight,
+          marginBottom,
+          marginLeft,
+          paddingTop,
+          paddingRight,
+          paddingBottom,
+          paddingLeft,
         }}
       />
     );
