@@ -47,12 +47,12 @@ export function LinkInputPopover(props: LinkInputPopoverProps) {
     options?.suggestion?.char ?? DEFAULT_VARIABLE_TRIGGER_CHAR;
 
   const autoCompleteOptions = useMemo(() => {
-    const withoutTrigger = defaultValue.replace(
+    const withoutTrigger = String(defaultValue || '').replace(
       new RegExp(variableTriggerCharacter, 'g'),
       ''
     );
 
-    return processVariables(variables, {
+    return processVariables(variables || [], {
       query: withoutTrigger || '',
       from: 'bubble-variable',
       editor,
@@ -124,9 +124,9 @@ export function LinkInputPopover(props: LinkInputPopoverProps) {
                     }, 0);
                   }}
                 >
-                  {renderVariable({
+                  {renderVariable?.({
                     variable: {
-                      name: defaultValue,
+                      name: String(defaultValue || ''),
                       valid: true,
                     },
                     fallback: '',
@@ -145,7 +145,7 @@ export function LinkInputPopover(props: LinkInputPopoverProps) {
 
                 <InputAutocomplete
                   editor={editor}
-                  value={defaultValue}
+                  value={String(defaultValue || '')}
                   onValueChange={(value) => {
                     onValueChange?.(value);
                   }}

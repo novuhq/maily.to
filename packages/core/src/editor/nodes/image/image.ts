@@ -80,8 +80,7 @@ export const ImageExtension = TiptapImage.extend({
           };
         },
         parseHTML: (element) => {
-          const externalLink = element.getAttribute('data-external-link');
-          return externalLink ? { externalLink } : null;
+          return element.getAttribute('data-external-link');
         },
       },
 
