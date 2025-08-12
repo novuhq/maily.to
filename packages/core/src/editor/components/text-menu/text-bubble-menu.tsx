@@ -47,7 +47,10 @@ export function TextBubbleMenu(props: EditorBubbleMenuProps) {
         return false;
       }
 
-      const domAtPos = view.domAtPos(from || 0).node as HTMLElement;
+      const domAtPosResult = view.domAtPos(from || 0);
+      if (!domAtPosResult) return false;
+      
+      const domAtPos = domAtPosResult.node as HTMLElement;
       const nodeDOM = view.nodeDOM(from || 0) as HTMLElement;
       const node = nodeDOM || domAtPos;
 
