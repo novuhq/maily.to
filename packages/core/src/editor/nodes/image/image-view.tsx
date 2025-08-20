@@ -96,7 +96,10 @@ export function ImageView(props: NodeViewProps) {
 
         // If aspect ratio is locked, calculate height based on aspect ratio
         if (node.attrs.lockAspectRatio) {
-          newHeight = getNewHeight(newWidth, node.attrs.aspectRatio);
+          const aspectRatio = node.attrs.aspectRatio
+            ? node.attrs.aspectRatio
+            : getAspectRatio(newWidth, newHeight);
+          newHeight = getNewHeight(newWidth, aspectRatio);
         }
 
         setResizingStyle({ width: newWidth, height: newHeight });
