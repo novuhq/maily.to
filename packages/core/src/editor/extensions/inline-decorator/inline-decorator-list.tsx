@@ -189,6 +189,22 @@ function createAllowHandler() {
 }
 
 /**
+ * Creates a reference client rect getter with fallback to decoration node's sibling
+ */
+function createGetReferenceClientRect(props: any): GetReferenceClientRect {
+  return () => {
+    const originalRect = props.clientRect();
+    if (originalRect.width === 0 && originalRect.height === 0) {
+      const previousSibling = props.decorationNode?.parentElement?.previousElementSibling;
+      if (previousSibling) {
+        return previousSibling.getBoundingClientRect();
+      }
+    }
+    return originalRect;
+  };
+}
+
+/**
  * Creates and manages the tippy popup instance
  */
 function createTippyPopupManager() {
@@ -206,18 +222,8 @@ function createTippyPopupManager() {
         return;
       }
 
-      const getReferenceClientRect: GetReferenceClientRect = () => {
-        // If the original clientRect returns 0,0, try to find the widget decoration
-        const originalRect = props.clientRect();
-        if (originalRect.width === 0 && originalRect.height === 0) {
-          return props.decorationNode.parentElement.previousElementSibling.getBoundingClientRect();
-        }
-        
-        return originalRect;
-      };
-
       popup = tippy('body', {
-        getReferenceClientRect,
+        getReferenceClientRect: createGetReferenceClientRect(props),
         appendTo: () => document.body,
         content: component.element,
         showOnCreate: true,
@@ -234,18 +240,8 @@ function createTippyPopupManager() {
         return;
       }
 
-      const getReferenceClientRect: GetReferenceClientRect = () => {
-        // If the original clientRect returns 0,0, try to find the widget decoration
-        const originalRect = props.clientRect();
-        if (originalRect.width === 0 && originalRect.height === 0) {
-          return props.decorationNode.parentElement.previousElementSibling.getBoundingClientRect();
-        }
-        
-        return originalRect;
-      };
-
       popup?.[0]?.setProps({
-        getReferenceClientRect,
+        getReferenceClientRect: createGetReferenceClientRect(props),
       });
     },
 
