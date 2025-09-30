@@ -206,8 +206,18 @@ function createTippyPopupManager() {
         return;
       }
 
+      const getReferenceClientRect: GetReferenceClientRect = () => {
+        // If the original clientRect returns 0,0, try to find the widget decoration
+        const originalRect = props.clientRect();
+        if (originalRect.width === 0 && originalRect.height === 0) {
+          return props.decorationNode.parentElement.previousElementSibling.getBoundingClientRect();
+        }
+        
+        return originalRect;
+      };
+
       popup = tippy('body', {
-        getReferenceClientRect: props.clientRect as GetReferenceClientRect,
+        getReferenceClientRect,
         appendTo: () => document.body,
         content: component.element,
         showOnCreate: true,
@@ -224,8 +234,18 @@ function createTippyPopupManager() {
         return;
       }
 
+      const getReferenceClientRect: GetReferenceClientRect = () => {
+        // If the original clientRect returns 0,0, try to find the widget decoration
+        const originalRect = props.clientRect();
+        if (originalRect.width === 0 && originalRect.height === 0) {
+          return props.decorationNode.parentElement.previousElementSibling.getBoundingClientRect();
+        }
+        
+        return originalRect;
+      };
+
       popup?.[0]?.setProps({
-        getReferenceClientRect: props.clientRect as GetReferenceClientRect,
+        getReferenceClientRect,
       });
     },
 
