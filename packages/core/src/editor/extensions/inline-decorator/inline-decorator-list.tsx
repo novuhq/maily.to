@@ -189,6 +189,22 @@ function createAllowHandler() {
 }
 
 /**
+ * Creates a reference client rect getter with fallback to decoration node's sibling
+ */
+function createGetReferenceClientRect(props: any): GetReferenceClientRect {
+  return () => {
+    const originalRect = props.clientRect();
+    if (originalRect.width === 0 && originalRect.height === 0) {
+      const previousSibling = props.decorationNode?.parentElement?.previousElementSibling;
+      if (previousSibling) {
+        return previousSibling.getBoundingClientRect();
+      }
+    }
+    return originalRect;
+  };
+}
+
+/**
  * Creates and manages the tippy popup instance
  */
 function createTippyPopupManager() {
@@ -207,7 +223,7 @@ function createTippyPopupManager() {
       }
 
       popup = tippy('body', {
-        getReferenceClientRect: props.clientRect as GetReferenceClientRect,
+        getReferenceClientRect: createGetReferenceClientRect(props),
         appendTo: () => document.body,
         content: component.element,
         showOnCreate: true,
@@ -225,7 +241,7 @@ function createTippyPopupManager() {
       }
 
       popup?.[0]?.setProps({
-        getReferenceClientRect: props.clientRect as GetReferenceClientRect,
+        getReferenceClientRect: createGetReferenceClientRect(props),
       });
     },
 
